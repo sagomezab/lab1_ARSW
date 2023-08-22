@@ -1,6 +1,7 @@
 
 ### Escuela Colombiana de Ingeniería
 ### Arquitecturas de Software - ARSW
+### Desarrollado por: Daniel Santiago Gómez Zabala
 ## Ejercicio Introducción al paralelismo - Hilos - Caso BlackListSearch
 
 
@@ -18,9 +19,23 @@
 1. De acuerdo con lo revisado en las lecturas, complete las clases CountThread, para que las mismas definan el ciclo de vida de un hilo que imprima por pantalla los números entre A y B.
 2. Complete el método __main__ de la clase CountMainThreads para que:
 	1. Cree 3 hilos de tipo CountThread, asignándole al primero el intervalo [0..99], al segundo [99..199], y al tercero [200..299].
+
+	  * Creacion de los hilos en la clase CountThreadsmain
+	  ![](img/CreacionHilos.png)
+
 	2. Inicie los tres hilos con 'start()'.
 	3. Ejecute y revise la salida por pantalla. 
 	4. Cambie el incio con 'start()' por 'run()'. Cómo cambia la salida?, por qué?.
+      
+	  * __Ejecución con Start__
+	  ![](img/EjecucionStart.png)
+
+	  * __Ejecución con Run__
+	  ![](img/EjecucionRun.png)
+
+	  * __Explicación__<br>
+	  Cuando se ejecuta con __Run()__ tenemos que los número estan en orden ya que este codigo existe en nuestro paquete y fue escrito por nosotros y se ejecutará en el orden en el que lo escribimos, mientras que al ejecutar con __Start()__ es un método que se encuentra en una libreria y este no tiene en cuenta el orden y acá se introduce un concepto llamado: time sliding. Este nos explica porqué la impresión con dicho método, ya que los hilos al encontrar un x tiempo en el procesador procede a realizar su tarea sin importar el orden de ejecución.
+
 
 **Parte II - Ejercicio Black List Search**
 
@@ -56,6 +71,12 @@ Para 'refactorizar' este código, y hacer que explote la capacidad multi-núcleo
 
 	* Se sabe que el HOST 202.24.34.55 está reportado en listas negras de una forma más dispersa, y que el host 212.24.24.55 NO está en ninguna lista negra.
 
+		* __IP: 202.24.34.55__<br>
+		![](img/IPnoconfiable.png)
+
+		* __IP: 202.24.24.55__<br>
+		![](img/IPnoaparece.png)
+
 
 **Parte II.I Para discutir la próxima clase (NO para implementar aún)**
 
@@ -66,14 +87,50 @@ La estrategia de paralelismo antes implementada es ineficiente en ciertos casos,
 A partir de lo anterior, implemente la siguiente secuencia de experimentos para realizar las validación de direcciones IP dispersas (por ejemplo 202.24.34.55), tomando los tiempos de ejecución de los mismos (asegúrese de hacerlos en la misma máquina):
 
 1. Un solo hilo.
+
+    * Resultado al ejecutar el programa con un solo hilo<br>
+	![](img/Con1hilo.png) 
+	* Vistazo a VisualVM mientras se ejecutaba el programa<br>
+	![](img/visualVMhilo1.png)
+
 2. Tantos hilos como núcleos de procesamiento (haga que el programa determine esto haciendo uso del [API Runtime](https://docs.oracle.com/javase/7/docs/api/java/lang/Runtime.html)).
+
+    * Resultado al ejecutar el programa con los n núcleos que tiene el procesador del equipo en el que se esta realizando la prueba<br>
+	![](img/Connucleos.png)
+	NOTA: Para sacar el valor de la cantidad de núcleos del procesador se utilizo la funcion (Runtime.getRuntime().availableProcessors())
+
+	* Vistazo con VisualVM mientras se ejecutaba el programa<br>
+	![](img/visualVMnucleos.png)
+
 3. Tantos hilos como el doble de núcleos de procesamiento.
+
+	* Resultado al ejecutar el programa con el doble de nucleos del procesador del equipo en el que se esta realizando la prueba<br>
+	![](img/Condoblenucleos.png)
+
+	* Vistazo con VisualVM mientras se ejecutaba el programa<br>
+	![](img/visualVMdoblenucleos.png)
+
 4. 50 hilos.
+
+    * Resultado al ejecutar el programa con 50 hilos<br>
+	![](img/Con50hilos.png) 
+	* Vistazo a VisualVM mientras se ejecutaba el programa<br>
+	![](img/visualVM50hilos.png)
+
 5. 100 hilos.
+
+	* Resultado al ejecutar el programa con 100 hilos<br>
+	![](img/Con100hilos.png) 
+	* Vistazo a VisualVM mientras se ejecutaba el programa<br>
+	![](img/visualVM100hilos.png)
+
+
 
 Al iniciar el programa ejecute el monitor jVisualVM, y a medida que corran las pruebas, revise y anote el consumo de CPU y de memoria en cada caso. ![](img/jvisualvm.png)
 
 Con lo anterior, y con los tiempos de ejecución dados, haga una gráfica de tiempo de solución vs. número de hilos. Analice y plantee hipótesis con su compañero para las siguientes preguntas (puede tener en cuenta lo reportado por jVisualVM):
+
+![](img/GraficaComparativa.png)
 
 **Parte IV - Ejercicio Black List Search**
 

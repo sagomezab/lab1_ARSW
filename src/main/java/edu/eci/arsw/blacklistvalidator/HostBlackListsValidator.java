@@ -6,6 +6,8 @@
 package edu.eci.arsw.blacklistvalidator;
 
 import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -17,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class HostBlackListsValidator {
 
-    private static final int BLACK_LIST_ALARM_COUNT=5;
+    public static final int BLACK_LIST_ALARM_COUNT=5;
     
     /**
      * Check the given host's IP address in all the available black lists,
@@ -32,20 +34,14 @@ public class HostBlackListsValidator {
     public List<Integer> checkHost(String ipaddress){
         
         LinkedList<Integer> blackListOcurrences=new LinkedList<>();
-        
         int ocurrencesCount=0;
-        
         HostBlacklistsDataSourceFacade skds=HostBlacklistsDataSourceFacade.getInstance();
-        
         int checkedListsCount=0;
         
         for (int i=0;i<skds.getRegisteredServersCount() && ocurrencesCount<BLACK_LIST_ALARM_COUNT;i++){
             checkedListsCount++;
-            
             if (skds.isInBlackListServer(i, ipaddress)){
-                
                 blackListOcurrences.add(i);
-                
                 ocurrencesCount++;
             }
         }
@@ -58,7 +54,59 @@ public class HostBlackListsValidator {
         }                
         
         LOG.log(Level.INFO, "Checked Black Lists:{0} of {1}", new Object[]{checkedListsCount, skds.getRegisteredServersCount()});
+        return blackListOcurrences;
+    }
+
+    public List<Integer> checkHost(String ipaddress, int n){
         
+        LinkedList<Integer> blackListOcurrences=new LinkedList<>();
+        int ocurrencesCount=0;
+        HostBlacklistsDataSourceFacade skds= HostBlacklistsDataSourceFacade.getInstance();
+        int checkedListsCount=0;
+
+        ArrayList<BlackListThread> Threads = new ArrayList<>();
+        int NumberOfLists = skds.getRegisteredServersCount()/n;
+        //int surplus = skds.getRegisteredServersCount()%n;
+        int start = 0;
+        int end = 0;
+        
+        for (int i = 0; i < n; i++){
+            start = i * NumberOfLists;
+            end = start + NumberOfLists;
+            BlackListThread SearchThread = new BlackListThread(start, end, ipaddress);
+            Threads.add(SearchThread);
+            SearchThread.start();
+        }
+
+        //if (surplus > 0){
+          //  BlackListThread SearchThread = new BlackListThread(start, end, ipaddress);
+            //Threads.add(SearchThread);
+            //SearchThread.start();
+        //}
+
+        for (BlackListThread BlackList: Threads){
+            try {
+                BlackList.join();
+            } catch (InterruptedException e) {
+                System.err.println("Error al esperar a que los hilos terminen: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
+
+        for (BlackListThread BlackList: Threads){
+            ocurrencesCount += BlackList.getOcurrencesCount();
+            checkedListsCount += BlackList.getCheckedLists();
+            blackListOcurrences.addAll(BlackList.getBlackListOcurrence());
+        }
+        
+        if (ocurrencesCount>=BLACK_LIST_ALARM_COUNT){
+            skds.reportAsNotTrustworthy(ipaddress);
+        }
+        else{
+            skds.reportAsTrustworthy(ipaddress);
+        }                
+        
+        LOG.log(Level.INFO, "Checked Black Lists:{0} of {1}", new Object[]{checkedListsCount, skds.getRegisteredServersCount()});
         return blackListOcurrences;
     }
     
