@@ -138,9 +138,19 @@ Con lo anterior, y con los tiempos de ejecución dados, haga una gráfica de tie
 
 	![](img/ahmdahls.png), donde _S(n)_ es el mejoramiento teórico del desempeño, _P_ la fracción paralelizable del algoritmo, y _n_ el número de hilos, a mayor _n_, mayor debería ser dicha mejora. Por qué el mejor desempeño no se logra con los 500 hilos?, cómo se compara este desempeño cuando se usan 200?. 
 
+	__RESPUESTA:__ al ejecutar el programa con 500 hilos no tendriamos una mejora significativa en los tiempos de ejecución, de hecho, al ser un cantidad considerable de hilos la creación de los mismo provocario una demora al ejecutar el programa. Mientras que al comparar el desempeño con 200 hilos la diferencia en tiempos, es decir, a mayor cantidad de hilos mayor sera el tiempo de ejecución por la creación de los n hilos. 
+
 2. Cómo se comporta la solución usando tantos hilos de procesamiento como núcleos comparado con el resultado de usar el doble de éste?.
 
+	__RESPUESTA:__ Al ver los resultados al ejecutar el problema vemos que con 8 núcleos tenemos un tiempo de 18581 milisegundos mientras que al ejecutar con el doble de los núcleos tenemos un tiempo de 10160 milisegundos, esto nos dice que aunque la cantidad de hilos sea el doble no significa que va a realizar la ejecución del problema, se acerca pero no es correcto afirmar lo que se menciono anteriormente.
+
 3. De acuerdo con lo anterior, si para este problema en lugar de 100 hilos en una sola CPU se pudiera usar 1 hilo en cada una de 100 máquinas hipotéticas, la ley de Amdahls se aplicaría mejor?. Si en lugar de esto se usaran c hilos en 100/c máquinas distribuidas (siendo c es el número de núcleos de dichas máquinas), se mejoraría?. Explique su respuesta.
+
+	__RESPUESTA:__
+
+	* __100 hilos en una sola CP__ en este caso se aplica la ley de Amdahl la capacidad de un solo núcleo de procesar los 100 hilos que se quieren ejecutar, seguira viendose afectado el rendimiento del programa por la capacidad de procesamiento de la CPU.
+	* __100 hilos en 100 máquinas__ en este caso se aprovechan al máximos los recursos. Sin embargo, la ley de Amdahl se seguira aplicando ya que seguiran existiendo partes del código que no se podran paralelizar y esto a la larga, limitara el rendimiento del programa.
+	* __C hilos en 100/c máquinas__ aunque es una solución viable en terminos de rendimiento si se tienen determinadas condiciones, como el tamaño de C y que una parte significativa del código sea paralelizable. Sin embargo, la comuncicación entre las máquinas seguiran afectando el rendimineto del progama.
 
 
 
